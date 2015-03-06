@@ -24,10 +24,10 @@ frequency xs = map (\xs -> (head xs, length xs)) . group . sort $ xs
 problem5 n =
   let candidates = [1..n]
       factorFactors = map (flip primeFactors $ 2) candidates
-      factorUsages = concat $ map frequency factorFactors
+      factorUsages = concatMap frequency factorFactors
       countsSorted = sortBy (compare `on` fst) factorUsages
       countsGrouped = groupBy (\x y -> fst x == fst y) countsSorted
       finalCounts = map (head . sortBy ((flip compare) `on` snd)) countsGrouped
-      expanded = concat $ map (\(factor, power) -> replicate power factor) finalCounts
+      expanded = concatMap (\(factor, power) -> replicate power factor) finalCounts
       finalProduct = foldr1 (*) expanded
   in finalProduct
