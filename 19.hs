@@ -5,12 +5,11 @@ main = print problem19
 data Date = Date
   { year :: Int
   , month :: Month
-  , day :: Int
+  , dayOfMonth :: Int
   , dayOfWeek :: Int
   } deriving (Eq, Show)
 
-
-
+-- is this silly? just use ints directly instead?
 data Month = January
            | February
            | March
@@ -21,9 +20,12 @@ data Month = January
            | September
            | November
            | December
-           deriving (Eq, Show, Ord, Enum)
+           deriving (Eq, Show, Ord, Enum, Bounded)
 
-daysInMonth (Date y m d dow)
+-- this requires the year as well for leap year rules,
+-- so we just pass entire dates to it.
+daysInMonth :: Date -> Int
+daysInMonth (Date y m dom dow)
   | m == September = 30
   | m == April     = 30
   | m == June      = 30
@@ -31,6 +33,15 @@ daysInMonth (Date y m d dow)
   | m == February  = 28 -- TODO leap year
   | otherwise      = 31
 
-problem19 =
-  let startDate = Date 1900 January 0 0
-  in startDate
+-- nextDate :: Date -> Date
+nextDate date@(Date y m dom dow) =
+  let nextDow = (dow + 1) `rem` 7
+      (monthOverflow, nextDom) = (dom + 1) `quotRem` (daysInMonth date)
+      (yearOverflow, nextMonthN) = ((fromEnum m) + monthOverflow) `quotRem` (fromEnum $ (maxBound :: Month))
+      nextMonth = toEnum nextMonthN
+      nextYear = y + yearOverflow
+  in Date nextYear nextMonth nextDom nextDow
+
+datesFrom = iterate nextDate
+
+problem19 = take 1000 $ datesFrom $ Date 1900 January 0 0
