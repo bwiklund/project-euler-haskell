@@ -1,3 +1,5 @@
+import Data.Array
+
 main = print problem19
 
 -- month, day, and dayOfWeek are zero indexed
@@ -8,6 +10,12 @@ data Date = Date
   , dayOfMonth :: Int
   , dayOfWeek :: Int
   } deriving (Eq, Show)
+
+toEnglish (Date y m dom dow) = (dayNames ! dow) ++ " " ++ (show (dom+1)) ++ " " ++ (monthNames ! m) ++ " " ++ (show y)
+
+dayNames = listArray (0,6) ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+
+monthNames = listArray (0,11) ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
 -- this requires the year as well for leap year rules,
 -- so we just pass entire dates to it.
@@ -31,4 +39,4 @@ nextDate date@(Date y m dom dow) =
 
 datesFrom = iterate nextDate
 
-problem19 = takeWhile (\d -> (year d) < 2001) $ datesFrom $ Date 1900 0 0 0
+problem19 = map toEnglish $ takeWhile (\d -> (year d) < 2001) $ datesFrom $ Date 1900 0 0 0
