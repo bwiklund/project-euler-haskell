@@ -1,47 +1,34 @@
 main = print problem19
 
--- day, and dayOfWeek are zero indexed
--- month has it's own data type
+-- month, day, and dayOfWeek are zero indexed
+-- dow is monday based
 data Date = Date
   { year :: Int
-  , month :: Month
+  , month :: Int
   , dayOfMonth :: Int
   , dayOfWeek :: Int
   } deriving (Eq, Show)
 
--- is this silly? just use ints directly instead?
-data Month = January
-           | February
-           | March
-           | April
-           | June
-           | July
-           | August
-           | September
-           | November
-           | December
-           deriving (Eq, Show, Ord, Enum, Bounded)
-
 -- this requires the year as well for leap year rules,
 -- so we just pass entire dates to it.
+-- months are ZERO indexed
 daysInMonth :: Date -> Int
 daysInMonth (Date y m dom dow)
-  | m == September = 30
-  | m == April     = 30
-  | m == June      = 30
-  | m == November  = 30
-  | m == February  = 28 -- TODO leap year
-  | otherwise      = 31
+  | m == 8    = 30
+  | m == 3    = 30
+  | m == 5    = 30
+  | m == 10   = 30
+  | m == 1    = 28 -- TODO leap year
+  | otherwise = 31
 
 -- nextDate :: Date -> Date
 nextDate date@(Date y m dom dow) =
   let nextDow = (dow + 1) `rem` 7
       (monthOverflow, nextDom) = (dom + 1) `quotRem` (daysInMonth date)
-      (yearOverflow, nextMonthN) = ((fromEnum m) + monthOverflow) `quotRem` (fromEnum $ (maxBound :: Month))
-      nextMonth = toEnum nextMonthN
+      (yearOverflow, nextMonth) = (m + monthOverflow) `quotRem` 12
       nextYear = y + yearOverflow
   in Date nextYear nextMonth nextDom nextDow
 
 datesFrom = iterate nextDate
 
-problem19 = take 1000 $ datesFrom $ Date 1900 January 0 0
+problem19 = takeWhile (\d -> (year d) < 2001) $ datesFrom $ Date 1900 0 0 0
