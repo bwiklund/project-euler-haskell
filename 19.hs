@@ -26,7 +26,10 @@ daysInMonth (Date y m dom dow)
   | m == 3    = 30
   | m == 5    = 30
   | m == 10   = 30
-  | m == 1    = 28 -- TODO leap year
+  | m == 1    = let isLeapYear = if (y `rem` 100) == 0
+                                     then (y `rem` 400) == 0
+                                     else (y `rem` 4) == 0
+                in if isLeapYear then 29 else 28
   | otherwise = 31
 
 -- nextDate :: Date -> Date
