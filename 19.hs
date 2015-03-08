@@ -42,4 +42,10 @@ nextDate date@(Date y m dom dow) =
 
 datesFrom = iterate nextDate
 
-problem19 = map toEnglish $ takeWhile (\d -> (year d) < 2001) $ datesFrom $ Date 1900 0 0 0
+-- problem specific stuff
+
+problem19 = length $ filter wasSundayOnFirstOfMonth dates
+  where wasSundayOnFirstOfMonth (Date y m dom dow) = dow == 6 && dom == 0
+        dates = dropWhile (\d -> (year d) < 1901) $
+                takeWhile (\d -> (year d) < 2001) $
+                datesFrom $ Date 1900 0 0 0
