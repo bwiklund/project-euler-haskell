@@ -1,4 +1,4 @@
-main = print $ allRings !! 500
+main = print $ allRings !! 501
 
 allRings = iterate ring (0, 0, 0)
 
